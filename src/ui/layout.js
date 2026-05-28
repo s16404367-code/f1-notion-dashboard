@@ -39,22 +39,66 @@ function mountCommon({ store, shell, mode }) {
 	clearMain(shell);
 
 	const client = createOpenF1Client({ baseUrl: store.state.config.openf1BaseUrl });
+	// Mount critical UI first (fast paint), then defer heavy panels.
 	const ctrl = createController({ store, client, mode });
-	const map = createTrackMap({ store });
-	const focus = createDriverFocus({ store });
-	const weather = createWeatherPanel({ store });
-	const rc = createRaceControlPanel({ store });
-	const radio = createTeamRadioPanel({ store });
 
 	const left = h("section", { class: "panel panel-left" }, [
 		ctrl.el,
-		h("div", { class: "stack" }, [weather.el, rc.el, radio.el])
+		h("div", { class: "stack" }, [])
+	]);
+	const leftStack = left.querySelector(".stack");
+
+	const center = h("section", { class: "panel panel-center" }, [
+		h("div", { class: "card" }, [
+			h("div", { class: "cardTitle", text: "Track Map" }),
+			h("div", { class: "muted", text: "Loading map…" })
+		])
 	]);
 
-	const center = h("section", { class: "panel panel-center" }, [map.el]);
-	const right = h("section", { class: "panel panel-right" }, [focus.el]);
+	const right = h("section", { class: "panel panel-right" }, [
+		h("div", { class: "card" }, [
+			h("div", { class: "cardTitle", text: "Driver Focus" }),
+			h("div", { class: "muted", text: "Loading…" })
+		])
+	]);
+
 	const grid = h("div", { class: "grid" }, [left, center, right]);
 	shell.main.appendChild(grid);
+
+	// Defer non-critical mounts to avoid long tasks
+	setTimeout(() => {
+		try {
+			const map = createTrackMap({ store });
+			center.innerHTML = "";
+			center.appendChild(map.el);
+		} catch (e) {
+			console.error(e);
+		}
+	}, 0);
+
+	setTimeout(() => {
+		try {
+			const focus = createDriverFocus({ store });
+			right.innerHTML = "";
+			right.appendChild(focus.el);
+		} catch (e) {
+			console.error(e);
+		}
+	}, 0);
+
+	setTimeout(() => {
+		try {
+			const weather = createWeatherPanel({ store });
+			const rc = createRaceControlPanel({ store });
+			const radio = createTeamRadioPanel({ store });
+			leftStack.innerHTML = "";
+			leftStack.appendChild(weather.el);
+			leftStack.appendChild(rc.el);
+			leftStack.appendChild(radio.el);
+		} catch (e) {
+			console.error(e);
+		}
+	}, 0);
 
 	ctrl.start().catch((err) => {
 		console.error(err);

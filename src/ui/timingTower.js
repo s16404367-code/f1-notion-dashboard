@@ -201,7 +201,10 @@ export function createController({ store, client, mode }) {
 		sessionSelect.appendChild(h("option", { value: "", text: "Loading…" }));
 
 		try {
+			// Timeout protection so UI never spins forever
+			const timeout = setTimeout(() => aborter?.abort(), 15_000);
 			const sessions = await client.sessions(params, { signal });
+			clearTimeout(timeout);
 			const deduped = dedupeBy(sessions, (s) => s?.session_key);
 			deduped.sort((a, b) => Date.parse(b?.date_start) - Date.parse(a?.date_start));
 			store.patch(["data", "sessions"], deduped);
