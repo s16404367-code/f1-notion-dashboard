@@ -208,7 +208,8 @@ export function createController({ store, client, mode }) {
 			setSessionOptions(deduped);
 		} catch (e) {
 			console.error(e);
-			toast("Cannot load sessions. OpenF1 blocked/offline.", { type: "error" });
+			if (e?.status === 429) toast("OpenF1 rate limit (429). Wait 1 minute and reload.", { type: "warn", ms: 6000 });
+			else toast("Cannot load sessions (network/blocked).", { type: "error", ms: 6000 });
 			sessionSelect.innerHTML = "";
 			sessionSelect.appendChild(h("option", { value: "", text: "Failed to load sessions" }));
 		}

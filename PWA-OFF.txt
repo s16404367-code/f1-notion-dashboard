@@ -1,0 +1,7 @@
+PWA/Service Worker is disabled in this build to prevent stale-cache issues on GitHub Pages.
+
+If you previously had a Service Worker installed, do this once:
+1) Open DevTools → Application
+2) Service Workers → Unregister
+3) Storage → Clear site data
+4) Reload
