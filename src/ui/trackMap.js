@@ -131,9 +131,12 @@ export function createTrackMap({ store }) {
 			ctx.fill();
 			ctx.globalAlpha = 1;
 
+			// label: car number + position (if available)
+			const pos = store.state.derived.driverTiming.get(dn)?.position;
+			const label = pos ? `${dn} (P${pos})` : String(dn);
 			ctx.font = `${12 * devicePixelRatio}px ui-sans-serif, system-ui`;
 			ctx.fillStyle = "#ffffff";
-			ctx.fillText(String(dn), x + 8 * devicePixelRatio, y - 6 * devicePixelRatio);
+			ctx.fillText(label, x + 8 * devicePixelRatio, y - 6 * devicePixelRatio);
 		}
 	}
 

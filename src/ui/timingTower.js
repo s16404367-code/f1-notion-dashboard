@@ -218,7 +218,13 @@ export function createController({ store, client, mode }) {
 		const key = Number(session_key);
 		if (!Number.isFinite(key)) throw new Error("Invalid session_key");
 
-		const drivers = await client.drivers({ session_key: key }, { signal });
+		let drivers;
+		try {
+			drivers = await client.drivers({ session_key: key }, { signal });
+		} catch (e) {
+			if (e?.status === 429) onRateLimit();
+			throw e;
+		}
 		store.patch(["data", "drivers"], safeArr(drivers));
 
 		const idx = new Map();
@@ -285,7 +291,9 @@ export function createController({ store, client, mode }) {
 		scheduler.add({
 			id: "intervals",
 			everyMs: store.state.config.live.pollMs.intervals,
-			run: async () => store.patch(["data", "intervals"], safeArr(await client.intervals({ session_key: key }, { signal }).catch(() => [])))
+			run: async () => guarded(async () => {
+				store.patch(["data", "intervals"], safeArr(await client.intervals({ session_key: key }, { signal })));
+			})
 		});
 		scheduler.add({
 			id: "laps",
@@ -295,7 +303,9 @@ export function createController({ store, client, mode }) {
 		scheduler.add({
 			id: "stints",
 			everyMs: store.state.config.live.pollMs.stints,
-			run: async () => store.patch(["data", "stints"], safeArr(await client.stints({ session_key: key }, { signal }).catch(() => [])))
+			run: async () => guarded(async () => {
+				store.patch(["data", "stints"], safeArr(await client.stints({ session_key: key }, { signal })));
+			})
 		});
 		scheduler.add({
 			id: "weather",
@@ -305,7 +315,9 @@ export function createController({ store, client, mode }) {
 		scheduler.add({
 			id: "rc",
 			everyMs: store.state.config.live.pollMs.raceControl,
-			run: async () => store.patch(["data", "raceControl"], safeArr(await client.raceControl({ session_key: key }, { signal }).catch(() => [])))
+			run: async () => guarded(async () => {
+				store.patch(["data", "raceControl"], safeArr(await client.raceControl({ session_key: key }, { signal })));
+			})
 		});
 		scheduler.add({
 			id: "radio",
@@ -315,13 +327,11 @@ export function createController({ store, client, mode }) {
 		scheduler.add({
 			id: "location",
 			everyMs: store.state.config.live.pollMs.location,
-			run: async () => {
-				const loc = await client
-					.location({ session_key: key, interval: store.state.config.live.locationWindowSeconds }, { signal })
-					.catch(() => []);
+			run: async () => guarded(async () => {
+				const loc = await client.location({ session_key: key, interval: store.state.config.live.locationWindowSeconds }, { signal });
 				store.patch(["data", "location"], safeArr(loc));
 				worker.postMessage({ type: "liveLatest", locRecent: loc });
-			}
+			})
 		});
 
 		scheduler.start();

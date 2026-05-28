@@ -1,18 +1,22 @@
+import { TRACK_SVGS_2025_2026 } from "./tracks2025_2026.js";
+
 export const CONFIG = {
 	appName: "F1 Telemetry Dashboard",
 	openf1BaseUrl: "https://api.openf1.org/v1",
 
 	// Live polling scheduler cadence (ms)
 	live: {
+		// IMPORTANT: OpenF1 rate limit is ~30 requests/minute.
+		// Keep total calls under that across all endpoints.
 		pollMs: {
-			sessions: 12_000,
-			intervals: 1_000,
-			laps: 1_500,
-			stints: 4_000,
-			weather: 5_000,
-			raceControl: 2_000,
-			teamRadio: 3_000,
-			location: 800
+			sessions: 30_000,
+			intervals: 10_000,
+			laps: 12_000,
+			stints: 20_000,
+			weather: 25_000,
+			raceControl: 15_000,
+			teamRadio: 20_000,
+			location: 10_000
 		},
 		locationWindowSeconds: 25
 	},
@@ -24,7 +28,10 @@ export const CONFIG = {
 		interpolateMaxGapMs: 2200
 	},
 
-	tracks: {
+	tracks: TRACK_SVGS_2025_2026,
+
+	// legacy key (unused):
+	tracksLegacy: {
 		// Specific outlines we ship
 		"monaco": "./assets/tracks/monaco.svg",
 		"monte carlo": "./assets/tracks/monaco.svg",

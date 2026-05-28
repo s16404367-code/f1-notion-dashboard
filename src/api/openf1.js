@@ -17,7 +17,9 @@ export function createOpenF1Client({ baseUrl }) {
 		});
 		if (!res.ok) {
 			const text = await res.text().catch(() => "");
-			throw new Error(`OpenF1 HTTP ${res.status} for ${path}: ${text.slice(0, 200)}`);
+			const err = new Error(`OpenF1 HTTP ${res.status} for ${path}: ${text.slice(0, 200)}`);
+			err.status = res.status;
+			throw err;
 		}
 		const data = await res.json();
 		return Array.isArray(data) ? data : [];
