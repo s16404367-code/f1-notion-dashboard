@@ -1,0 +1,8 @@
+If the site seems stuck on “Loading…” after an update:
+
+1) In your browser DevTools → Application → Service Workers
+2) Click **Unregister**
+3) Application → Storage → **Clear site data**
+4) Hard refresh (Ctrl+Shift+R)
+
+This forces the latest JS/CSS to load.
