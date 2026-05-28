@@ -61,15 +61,7 @@ function mountCommon({ store, shell, mode }) {
 		toast("Failed to start. OpenF1 may be busy.", { type: "error" });
 	});
 
-	// Track SVG mapping updates (avoid patch->emit infinite loop)
-	const updateTrack = () => {
-		const next = computeTrackSvgUrl(store.state);
-		if (store.state.ui.trackSvgUrl !== next) {
-			store.patch(["ui", "trackSvgUrl"], next);
-		}
-	};
-	store.on("state", updateTrack);
-	updateTrack();
+	// Track SVG mapping is computed inside TrackMap (no store.patch here to avoid cycles)
 
 	// Safety: when switching to history, stop live
 	if (mode === "history") {

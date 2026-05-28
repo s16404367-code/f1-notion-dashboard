@@ -138,7 +138,7 @@ export function createTrackMap({ store }) {
 	}
 
 	function render() {
-		const svgUrl = store.state.ui.trackSvgUrl;
+		const svgUrl = computeTrackSvgUrl(store.state);
 		if (svgUrl !== currentSvgUrl) {
 			currentSvgUrl = svgUrl;
 			loadSvg(svgUrl).catch(() => {
