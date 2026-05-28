@@ -116,10 +116,6 @@ export function createTrackMap({ store }) {
 
 		ctx.clearRect(0, 0, pxW, pxH);
 
-		const latestMap = getLatestLocations();
-		const latestSamples = Array.from(latestMap.values());
-		if (!latestSamples.length) return;
-
 		const toUV = normalizePoints(latestSamples);
 		const selected = store.state.ui.selectedDriverNumber;
 		const teamColors = store.state.config.teamColors || {};

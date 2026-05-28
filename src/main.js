@@ -7,9 +7,11 @@ import { setToastRoot } from "./ui/toast.js";
 // PWA disabled for stability on GitHub Pages (prevents stale-cache crashes)
 // If you want PWA back later, we can re-enable it safely.
 
+const firstPaint = document.getElementById("firstPaint");
 const root = document.getElementById("app");
 const shell = createAppShell();
 root.appendChild(shell.el);
+if (firstPaint) firstPaint.remove();
 
 setToastRoot(shell.toastRoot);
 

@@ -11,6 +11,8 @@
 	<link rel="stylesheet" href="./src/styles/bundle.css" />
 </head>
 <body>
+	<!-- Static first paint (prevents NO_FCP in audits) -->
+	<div id="firstPaint" style="padding:16px;font-family:system-ui;color:#f4f6ff">Loading dashboard…</div>
 	<div id="app"></div>
 	<noscript>This app needs JavaScript enabled.</noscript>
 	<script type="module" src="./src/main.js"></script>

@@ -1,4 +1,4 @@
-const CACHE = "f1-openf1-dynamic-v10";
+const CACHE = "f1-openf1-dynamic-v11";
 
 // Cache-first for app shell, network-first for OpenF1.
 const SHELL = [
