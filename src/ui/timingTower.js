@@ -175,7 +175,10 @@ export function createController({ store, client, mode }) {
 	function setSessionOptions(sessions) {
 		const arr = safeArr(sessions);
 		const options = arr.map((s) => {
-			const name = `${fmt(s?.meeting_name)} • ${fmt(s?.session_name)} • ${fmt(s?.date_start).slice(0, 19)}`;
+			// "Venue" best-effort: prefer circuit_short_name, else meeting_name
+			const venue = fmt(s?.circuit_short_name || s?.meeting_name);
+			const sess = fmt(s?.session_name);
+			const name = `${venue} • ${sess}`;
 			return h("option", { value: String(s?.session_key ?? ""), text: name });
 		});
 		sessionSelect.innerHTML = "";

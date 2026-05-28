@@ -96,6 +96,16 @@ a{color:inherit;text-decoration:none}
 	color: var(--text);
 	padding:10px 12px;
 	outline:none;
+	appearance: none;
+}
+
+/* Make dropdown list readable (browser-dependent) */
+select.select{
+	background-color: rgba(20,20,30,.92);
+}
+select.select option{
+	background-color: #101018;
+	color: #f4f6ff;
 }
 .btn{cursor:pointer;font-weight:700}
 .btn:hover{border-color: rgba(255,255,255,.16)}
