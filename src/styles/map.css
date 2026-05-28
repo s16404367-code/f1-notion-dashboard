@@ -1,0 +1,34 @@
+.mapCard{padding:12px}
+.mapWrap{
+	position:relative;
+	width:100%;
+	aspect-ratio: 16 / 9;
+	border-radius: 14px;
+	border: 1px solid var(--line);
+	overflow:hidden;
+	background: radial-gradient(900px 600px at 50% 30%, rgba(255,255,255,.04), transparent 55%),
+		rgba(0,0,0,.16);
+}
+
+.mapSvg{
+	position:absolute;
+	inset:0;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	opacity:.9;
+}
+.mapSvg svg{width:100%;height:100%}
+
+.mapCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+.mapHint{
+	position:absolute;
+	left:12px; bottom:12px;
+	padding:8px 10px;
+	border-radius: 12px;
+	border:1px solid var(--line);
+	background: rgba(10,10,16,.75);
+	color: var(--muted);
+	font-size:12px;
+}
