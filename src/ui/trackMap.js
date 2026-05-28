@@ -92,17 +92,29 @@ export function createTrackMap({ store }) {
 		return map;
 	}
 
-	function draw() {
-		requestAnimationFrame(draw);
-
-		const rect = canvas.getBoundingClientRect();
-		const w = Math.max(1, Math.floor(rect.width * devicePixelRatio));
-		const h = Math.max(1, Math.floor(rect.height * devicePixelRatio));
-		if (canvas.width !== w || canvas.height !== h) {
+	// Avoid layout thrash: cache size via ResizeObserver and draw at a capped FPS.
+	let pxW = 1200, pxH = 800;
+	function resizeCanvas() {
+		const w = Math.max(1, Math.floor(canvas.clientWidth * devicePixelRatio));
+		const h = Math.max(1, Math.floor(canvas.clientHeight * devicePixelRatio));
+		if (w && h && (canvas.width !== w || canvas.height !== h)) {
 			canvas.width = w;
 			canvas.height = h;
+			pxW = w; pxH = h;
 		}
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
+	resizeCanvas();
+	const ro = new ResizeObserver(() => resizeCanvas());
+	ro.observe(canvas);
+
+	let lastFrame = 0;
+	function draw(now = 0) {
+		requestAnimationFrame(draw);
+		// cap to ~12fps to reduce main-thread load
+		if (now - lastFrame < 80) return;
+		lastFrame = now;
+
+		ctx.clearRect(0, 0, pxW, pxH);
 
 		const latestMap = getLatestLocations();
 		const latestSamples = Array.from(latestMap.values());

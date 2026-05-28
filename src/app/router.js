@@ -10,8 +10,11 @@ export function createRouter({ store, shell }) {
 	function render() {
 		const view = parseHash();
 		store.patch(["mode"], view);
-		if (view === "history") mountHistory({ store, shell });
-		else mountLive({ store, shell });
+		// Defer heavy mount to next frame for faster first paint
+		requestAnimationFrame(() => {
+			if (view === "history") mountHistory({ store, shell });
+			else mountLive({ store, shell });
+		});
 	}
 
 	function start() {
